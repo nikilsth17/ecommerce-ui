@@ -1,6 +1,7 @@
 import React from 'react'
 import RegisterForm from '../component/RegisterForm'
 import { Box, Typography } from '@mui/material'
+import { Link } from 'react-router-dom'
 
 
 
@@ -27,6 +28,7 @@ const Register = () => {
         Register
     </Typography>
         <RegisterForm/>
+    <Link to="/login">Already registered? Login</Link>
     </Box>
   )
 }
