@@ -16,6 +16,8 @@ const LoginForm = () => {
       const res= await axios.post("http://localhost:5000/user/login",values);
 
       console.log(res.data);
+      const token= res?.data?.token;
+      localStorage.setItem("accesstoken",token);
     navigate("/home");
   } catch (error) {
     console.log(error.response.data);
