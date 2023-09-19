@@ -3,23 +3,39 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import axios from 'axios';
+import { useMutation } from 'react-query';
+import { $axios } from '../lib/axios';
+import { useNavigate } from 'react-router-dom';
 
 
 const RegisterForm = () => {
-    const [message,setMessage]=useState("");
-    const registerUser=async(values)=>{
-        const newUser= values;
-        delete newUser.confirmPassword;
-        const res= await axios.post("http://localhost:5000/user/register",newUser);
-        setMessage(res.data.message);
+  const navigate= useNavigate();
+  const {mutate,isLoading,isError,error} =useMutation({
+    mutationKey:["register-user"],
+    mutationFn:(userData)=>{
+      return $axios.post("/user/register", userData);
+    },
+    onSuccess:(res)=>{
+      navigate("/login");
+    }
+  })
+    // const registerUser=async(values)=>{
+    //     const newUser= values;
+    //     delete newUser.confirmPassword;
+    //     const res= await axios.post("http://localhost:5000/user/register",newUser);
+    //     setMessage(res.data.message);
 
-        console.log(res.data);
-    };
+    //     console.log(res.data);
+    // };
 
   return (
     <>
-    {message && <Typography variant='h4'>{message}</Typography>}
-    <Formik
+      {isLoading && <Typography>Logging in...</Typography>}
+      {isError && (
+        <Typography sx={{ color: "red" }}>
+          {error.response.data.message}
+        </Typography>
+      )}    <Formik
       initialValues={{ 
         email: "",
           firstName: "",
@@ -64,7 +80,7 @@ const RegisterForm = () => {
           .oneOf(["buyer", "seller"]),
       })}
       onSubmit={async(values) => {
-        registerUser(values);
+        mutate(values);
       }}
     >
       {formik => (

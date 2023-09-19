@@ -2,29 +2,34 @@ import React, { useState } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { Button, TextField, Typography } from '@mui/material';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from 'react-query';
+import { $axios } from '../lib/axios';
 
 
 const LoginForm = () => {
 
 
   const  navigate= useNavigate();
-  const loginUser=async(values)=>{
-
-  try {
-      const res= await axios.post("http://localhost:5000/user/login",values);
-
-      console.log(res.data);
-      const token= res?.data?.token;
-      localStorage.setItem("accesstoken",token);
-    navigate("/home");
-  } catch (error) {
-    console.log(error.response.data);
-  }
-  };  
+  const { mutate, isLoading, error, isError } = useMutation({
+    mutationKey: ["login"],
+    mutationFn: async (values) => await $axios.post("/user/login", values),
+    onSuccess: (res) => {
+      localStorage.setItem("accesstoken", res?.data?.token);
+      localStorage.setItem("firstName", res?.data?.user?.firstName);
+      localStorage.setItem("userRole", res?.data?.user?.role);
+      navigate("/product");
+    },
+    
+  });
   return (
     <>
+      {isLoading && <Typography>Logging in...</Typography>}
+      {isError && (
+        <Typography sx={{ color: "red" }}>
+          {error.response.data.message}
+        </Typography>
+      )}
      <Formik
       initialValues={{ email: '' ,password:''}}
       validationSchema={Yup.object({
@@ -36,7 +41,7 @@ const LoginForm = () => {
 
       })}
       onSubmit={(values) => {
-        loginUser(values);
+        mutate(values);
       }}
     >
       {formik => (
