@@ -20,6 +20,8 @@ const BuyerProductList = () => {
     });
     const products=data?.data;
   return (
+    <>
+   
     <Grid container 
         sx={{
             display:"flex", 
@@ -40,6 +42,8 @@ const BuyerProductList = () => {
             })}
         
     </Grid>
+   
+    </>
   )
 }
 

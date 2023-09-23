@@ -8,3 +8,31 @@
   color: red;
   text-align: left;
 }
+nav {
+  background-color:green;
+}
+
+.navlink-active {
+  color: green;
+  text-decoration: none;
+  font-size: 10rem;
+}
+
+.navlink-pending {
+  color: red;
+  font-size: 2rem;
+  text-decoration: none;
+}
+
+
+.footer {
+  /* position: fixed; */
+  /* padding: 2rem; */
+  bottom: 0;
+  width: 100%;
+  height: 60px; /* Height of the footer */
+  background: #4682A9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

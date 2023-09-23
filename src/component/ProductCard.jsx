@@ -1,11 +1,13 @@
-import { Button, Card, CardActions, CardContent, CardMedia, Typography } from '@mui/material'
+import { Button, Card, CardActions, CardContent, CardMedia, Grid, Typography } from '@mui/material'
 import React from 'react'
 
 const ProductCard = (props) => {
     const product= props.item;
   return (
-    <Card sx={{
-        width:"30%",
+    <Grid item xs={12} sm={6} md={4} lg={3}>
+       <Card sx={{
+        padding:"0px",
+        maxWidth:"100%",
         maxHeight:"400px", 
         boxShadow:" rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px" 
         }}
@@ -31,6 +33,8 @@ const ProductCard = (props) => {
         <Button size="small">Learn More</Button>
       </CardActions>
     </Card>
+    </Grid>
+   
   
   )
 }
