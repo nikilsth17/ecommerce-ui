@@ -12,12 +12,12 @@ const RegisterForm = () => {
   const navigate= useNavigate();
   const {mutate,isLoading,isError,error} =useMutation({
     mutationKey:["register-user"],
-    mutationFn:(userData)=>{
-      return $axios.post("/user/register", userData);
+    mutationFn:async(userData)=>{
+      return await $axios.post("/user/register", userData);
     },
     onSuccess:(res)=>{
       navigate("/login");
-    }
+    },
   })
     // const registerUser=async(values)=>{
     //     const newUser= values;
@@ -30,12 +30,13 @@ const RegisterForm = () => {
 
   return (
     <>
-      {isLoading && <Typography>Logging in...</Typography>}
+      {isLoading && <Typography>Registering......</Typography>}
       {isError && (
         <Typography sx={{ color: "red" }}>
           {error.response.data.message}
         </Typography>
-      )}    <Formik
+      )}    
+      <Formik
       initialValues={{ 
         email: "",
           firstName: "",
@@ -80,6 +81,7 @@ const RegisterForm = () => {
           .oneOf(["buyer", "seller"]),
       })}
       onSubmit={async(values) => {
+        delete values.confirmPassword;
         mutate(values);
       }}
     >
