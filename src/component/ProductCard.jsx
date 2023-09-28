@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 
 const ProductCard = (props) => {
   const product = props.item;
+  const userRole = localStorage.getItem("userRole");
+
   const naviagate= useNavigate();
   const goToDetail=()=>{
     naviagate(`/product/details/${product._id}`);
@@ -14,10 +16,15 @@ const ProductCard = (props) => {
     <Box item xs={12} sm={6} md={4} lg={3}>
       <Card
         sx={{
-          padding: "0px",
-          maxWidth: "100%",
-          maxHeight: "400px",
-          boxShadow: "rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px",
+          maxWidth: {
+            xs: "100vw",
+            sm: "25vw",
+          },
+          
+
+          maxHeight: 500,
+          boxShadow:
+            " rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px",
         }}
       >
         <CardMedia
@@ -44,8 +51,23 @@ const ProductCard = (props) => {
           </Typography>
         </CardContent>
         <CardActions>
-          <Button size="small" variant='contained' onClick={()=>goToDetail()}>Share</Button>
-          <Button size="small">Learn More</Button>
+        <Button
+            size="small"
+            variant="contained"
+            onClick={() => goToDetail()}
+          > 
+            Explore         
+          </Button> 
+          {userRole === "seller" && (
+            <Button
+              size="small"
+              variant="contained"
+              color="error"
+              // onClick={(event) => openPopover(event)}
+            >
+              Delete
+            </Button>
+)}
         </CardActions>
       </Card>
     </Box>

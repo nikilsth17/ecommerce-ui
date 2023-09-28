@@ -11,8 +11,9 @@ const Product = () => {
     const naviagate= useNavigate();
   return (
     <Box sx={{
+      mt:"2rem",
       padding: {
-        xs: 0,
+        xs: "3rem",
         sm: "3rem",
       },
       }}

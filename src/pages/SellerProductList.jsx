@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { $axios } from "../lib/axios";
-import { Box, Pagination, Typography } from "@mui/material";
+import { Box, Grid, Pagination, Typography } from "@mui/material";
 import ProductCard from "../component/ProductCard";
 import Progress from "../component/Progress";
 import { Link } from "react-router-dom";
@@ -14,7 +14,7 @@ const SellerProductList = () => {
     queryFn: async () => {
       return await $axios.post("/product/seller/all", {
         page: currentPage,
-        limit: 3,
+        limit: 5,
       });
     },
   });
@@ -32,11 +32,11 @@ const SellerProductList = () => {
         <Box
           sx={{
             display: "flex",
-            flexDirection: "row",
+            flexDirection: "column",
 
             justifyContent: "center",
             alignItems: "center",
-            gap:"2rem"
+            marginTop: "20rem",
           }}
         >
           <Typography variant="h3" sx={{ color: "grey" }}>
@@ -51,13 +51,12 @@ const SellerProductList = () => {
           sx={{
             display: "flex",
 
-            // flexWrap: "wrap",
+            flexWrap: "wrap",
             justifyContent: "center",
             alignItems: "center",
 
             gap: "2rem",
             minHeight: "60vh",
-            minWidth:"40vw"
           }}
         >
           {productList?.map((item) => {
@@ -72,11 +71,10 @@ const SellerProductList = () => {
           count={totalPage}
           color="secondary"
           sx={{
-            background: "none",
-            mt: "2rem",
-            mb: "2rem",
             display: "flex",
-            justifyContent: "center",
+          justifyContent: "center",
+          background: "none",
+          mt: "2rem",
           }}
           onChange={(_, value) => {
             setCurrentPage(value);
