@@ -1,9 +1,10 @@
 import React from 'react'
 import ProductCard from '../component/ProductCard'
-import { Grid, Typography } from '@mui/material'
+import { Grid, Pagination, Typography } from '@mui/material'
 import { useQuery } from 'react-query'
 import { $axios } from '../lib/axios'
 import Progress from '../component/Progress'
+import { Box } from '@mui/system'
 
 const BuyerProductList = () => {
     const {data,error,isLoading,isError}=useQuery({
@@ -22,14 +23,17 @@ const BuyerProductList = () => {
   return (
     <>
    
-    <Grid container 
+    <Box container 
         sx={{
-            display:"flex", 
-            justifyContent:"center", 
-            alignItems:"center", 
-            gap:"2rem", 
-            flexWrap:"wrap",
-            margin:"2rem 0 0 0"
+            display: "flex",
+            flexDirection:"row",
+            
+            justifyContent: "center",
+            alignItems: "center",
+
+            gap: "2rem",
+            minHeight: "60vh",
+            minWidth:"300px",
         }}
     >
         
@@ -41,8 +45,13 @@ const BuyerProductList = () => {
                 return <ProductCard key={item._id} item={item}/>
             })}
         
-    </Grid>
-   
+    </Box>
+    <Pagination count={10} color="primary" sx={{background: "none",
+                mt: "1rem",
+                mb: "1rem",
+                display: "flex",
+                justifyContent: "center", }}
+      />
     </>
   )
 }

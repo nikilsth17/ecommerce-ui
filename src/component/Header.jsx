@@ -16,7 +16,8 @@ import Button from '@mui/material/Button';
 import { Avatar, Stack } from '@mui/material';
 import { deepOrange } from '@mui/material/colors';
 import { Link, NavLink } from 'react-router-dom';
-
+import {BiLogOut} from "react-icons/bi";
+import LogoutDialog from './LogoutDialog';
 
 const drawerWidth = 240;
 const navItems = [
@@ -117,7 +118,8 @@ function Header(props) {
             >
               N
             </Avatar>
-            </Stack>
+          </Stack>
+          <LogoutDialog/>
         </Toolbar>
       </AppBar>
       <nav>

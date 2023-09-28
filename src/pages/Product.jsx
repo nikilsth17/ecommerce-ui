@@ -10,22 +10,37 @@ const Product = () => {
     const userRole =localStorage.getItem("userRole");
     const naviagate= useNavigate();
   return (
-    <Box sx={{mt:"3rem",padding:"2rem"}}>
+    <Box sx={{
+      padding: {
+        xs: 0,
+        sm: "3rem",
+      },
+      }}
+    >
       <Stack sx={{
-        display:"flex",
-        flexDirection:"row",
-        justifyContent:"flex-end",
-        alignItems:"center",
-        mb:"3rem",
-        mr:"10rem"
+       display: "flex",
+       flexDirection: "row",
+       justifyContent: {
+         xs: "center",
+         sm: "center",
+         md: "flex-end",
+       },
+       alignItems: "center",
+
+       mr: {
+         xs: 0,
+         sm: "5rem",
+       },
       }}>
-        <Button variant='contained' 
+        {
+          userRole==="seller" &&   <Button variant='contained' 
           onClick={()=>naviagate("/product/add")} 
           sx={{
             gap:"1rem"
           }}
         ><HiOutlineViewGridAdd size={"1.5rem"}/> Product</Button>
-        
+        }
+      
     
       </Stack>
       {userRole==="seller"? <SellerProductList/>:<BuyerProductList/>}

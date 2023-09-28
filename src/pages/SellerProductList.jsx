@@ -1,49 +1,90 @@
-import React from 'react'
-import ProductCard from '../component/ProductCard';
-import { Grid, Typography } from '@mui/material';
-import Progress from '../component/Progress';
-import { useQuery } from 'react-query';
-import { $axios } from '../lib/axios';
+import React, { useState } from "react";
+import { useQuery } from "react-query";
+import { $axios } from "../lib/axios";
+import { Box, Pagination, Typography } from "@mui/material";
+import ProductCard from "../component/ProductCard";
+import Progress from "../component/Progress";
+import { Link } from "react-router-dom";
 
 const SellerProductList = () => {
-  const {data,error,isLoading,isError}=useQuery({
-    queryKey:["seller-product-list"],
-    queryFn:async()=>{
-        return await $axios.post("/product/seller/all",
-        {
-            page:1,
-            limit:10,
+  const [currentPage, setCurrentPage] = useState(1);
 
-        });
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["seller-product-list", currentPage],
+    queryFn: async () => {
+      return await $axios.post("/product/seller/all", {
+        page: currentPage,
+        limit: 3,
+      });
     },
-
   });
-  const productList=data?.data;
-  return (
-  <>
 
-  <Grid container 
-      sx={{
-          display:"flex", 
-          justifyContent:"center", 
-          alignItems:"center", 
-          gap:"2rem", 
-          flexWrap:"wrap",
-          margin:"2rem 0 0 0"
-      }}
-  >
-      
-          {isLoading && <Progress/>}
-          {error && (
-              <Typography sx={{color:"red"}}>{error.response.data.message}</Typography>
-          )}
-          {productList?.map((item)=>{
-              return <ProductCard key={item._id} item={item}/>
+  const productList = data?.data?.products;
+  const totalPage = data?.data?.totalPage;
+  console.log(totalPage);
+
+  if (isLoading) {
+    return <Progress />;
+  }
+  return (
+    <>
+      {productList.length <= 0 ? (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+
+            justifyContent: "center",
+            alignItems: "center",
+            gap:"2rem"
+          }}
+        >
+          <Typography variant="h3" sx={{ color: "grey" }}>
+            No product added
+          </Typography>
+          <Link to="/product/add">
+            <Typography variant="h6">Click here to add product</Typography>
+          </Link>
+        </Box>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+
+            // flexWrap: "wrap",
+            justifyContent: "center",
+            alignItems: "center",
+
+            gap: "2rem",
+            minHeight: "60vh",
+            minWidth:"40vw"
+          }}
+        >
+          {productList?.map((item) => {
+            return <ProductCard key={item._id} item={item} />;
           })}
-      
-  </Grid>
-</>
-  )
+        </Box>
+      )}
+
+      {totalPage > 0 && (
+        <Pagination
+          page={currentPage}
+          count={totalPage}
+          color="secondary"
+          sx={{
+            background: "none",
+            mt: "2rem",
+            mb: "2rem",
+            display: "flex",
+            justifyContent: "center",
+          }}
+          onChange={(_, value) => {
+            setCurrentPage(value);
+          }}
+        />
+      )}
+    </>
+  );
 };
 
-export default SellerProductList
+export default SellerProductList;
