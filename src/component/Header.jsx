@@ -13,11 +13,15 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { Avatar, Stack } from '@mui/material';
+import { Avatar, Badge, Stack } from '@mui/material';
 import { deepOrange } from '@mui/material/colors';
 import { Link, NavLink } from 'react-router-dom';
 import {BiLogOut} from "react-icons/bi";
 import LogoutDialog from './LogoutDialog';
+import { AiOutlineShoppingCart } from 'react-icons/ai';
+import { useQuery } from 'react-query';
+import {$axios} from "../lib/axios";
+
 
 const drawerWidth = 240;
 const navItems = [
@@ -45,6 +49,15 @@ function Header(props) {
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   };
+
+//get cart count query
+const {data,isError,error}=useQuery({
+  queryKey:["cart-count"],
+  queryFn:async()=>{
+    return await $axios.get("/cart/count");
+  }
+})
+const cardItemCount= data?.data?.count;
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center',color:"black"}}>
@@ -110,7 +123,18 @@ function Header(props) {
             ))}
            
           </Box>
-          <Stack direction="row" spacing={2} >
+
+
+          <Stack direction="row"
+            justifyContent="center"
+            alignItems="center"
+            spacing={2}
+ 
+          >
+            <Badge badgeContent={cardItemCount} color="primary">
+
+              <AiOutlineShoppingCart color='black' size={30}/>
+            </Badge>
             <Avatar
               sx={{ bgcolor: deepOrange[400] }}
               alt="Remy Sharp"
@@ -119,6 +143,7 @@ function Header(props) {
               N
             </Avatar>
           </Stack>
+
           <LogoutDialog/>
         </Toolbar>
       </AppBar>

@@ -2,17 +2,25 @@ import { Button, Chip, Grid, Typography } from '@mui/material'
 import { Box, Stack } from '@mui/system'
 import React, { useState } from 'react'
 import {AiOutlineMinus, AiOutlinePlus} from "react-icons/ai";
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { $axios } from '../lib/axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import Progress from '../component/Progress';
 import { TypeSpecimenOutlined } from '@mui/icons-material';
+import { useDispatch } from 'react-redux';
+import { openSuccessSnackbar } from '../store/slice/snackbarSlice';
 
 const ProductDetail = () => {
     const [count, setCount]= useState(1);
     const userRole = localStorage.getItem("userRole");
+
+    const queryClient= useQueryClient();
+    const dispatch= useDispatch();
+
     const navigate= useNavigate();
     const params=useParams();
+
+
     const {isLoading,isError,error,data}=useQuery({
         queryKey:["product-detail"],
         queryFn:async()=>{
@@ -22,8 +30,23 @@ const ProductDetail = () => {
     const productDetail= data?.data;
     const availableProductQuantity = productDetail?.quantity;
 
-    console.log(productDetail);
-    if (isLoading){
+
+    //add item to cart mutation
+    const {mutate:addToCartMutate,isLoading:isAddingToCart}=useMutation({
+        mutationKey:["add-to-cart"],
+        mutationFn:async()=>{
+            return await $axios.post(`/cart/add/${params.productId}`,{
+                quantity:count,
+            })
+        },
+        onSuccess:(data)=>{
+            queryClient.invalidateQueries("cart-count");
+            dispatch(openSuccessSnackbar(data?.data?.message));
+        }
+    })
+
+
+    if (isLoading||isAddingToCart){
         return <Progress/>;
     }
   return (
@@ -130,7 +153,15 @@ const ProductDetail = () => {
              </Grid>
  
              <Grid item>
-                 <Button color='success' variant='contained'>Add to cart</Button>
+                 <Button 
+                    color='success' 
+                    variant='contained'
+                    onClick={()=>{
+                        addToCartMutate()
+                    }}
+                >
+                    Add to cart
+                </Button>
              </Grid>
              </>
             ):(

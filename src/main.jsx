@@ -11,14 +11,18 @@ import {
   QueryClient,
   QueryClientProvider,
 } from 'react-query'
+import { Provider } from 'react-redux';
+import reduxStore from './store';
 
 const router= createBrowserRouter([...loginRoutes,...mainRoutes]);
 const queryClient=new QueryClient();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}> 
-      <RouterProvider router={router}/>
-    </QueryClientProvider>
+    <Provider store={reduxStore}>
+      <QueryClientProvider client={queryClient}> 
+        <RouterProvider router={router}/>
+      </QueryClientProvider>
+    </Provider>
   </React.StrictMode>,
 )
