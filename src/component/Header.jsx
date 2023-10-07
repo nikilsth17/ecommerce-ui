@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { Avatar, Badge, Stack } from '@mui/material';
 import { deepOrange } from '@mui/material/colors';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, Navigate, useNavigate } from 'react-router-dom';
 import {BiLogOut} from "react-icons/bi";
 import LogoutDialog from './LogoutDialog';
 import { AiOutlineShoppingCart } from 'react-icons/ai';
@@ -50,6 +50,7 @@ function Header(props) {
     setMobileOpen((prevState) => !prevState);
   };
 
+  const navigate= useNavigate();
 //get cart count query
 const {data,isError,error}=useQuery({
   queryKey:["cart-count"],
@@ -133,7 +134,7 @@ const cardItemCount= data?.data?.count;
           >
             <Badge badgeContent={cardItemCount} color="primary">
 
-              <AiOutlineShoppingCart color='black' size={30}/>
+              <AiOutlineShoppingCart color='black' size={30} onClick={()=>navigate("/cart")}/>
             </Badge>
             <Avatar
               sx={{ bgcolor: deepOrange[400] }}
