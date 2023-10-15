@@ -8,20 +8,41 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { getRandomId } from '../utilis/randomIdGenerate';
 import {AiOutlineDelete, AiOutlineMinus, AiOutlinePlus} from "react-icons/ai";
-import { Stack, Typography } from '@mui/material';
+import { Button, LinearProgress, Stack, Typography } from '@mui/material';
+import { QueriesObserver, QueryClient, useMutation, useQueryClient } from 'react-query';
+import { $axios } from '../lib/axios';
+import { useDispatch } from 'react-redux';
+import { openErrorSnackbar, openSuccessSnackbar } from '../store/slice/snackbarSlice';
 
 
 
 
 const tableHeadData=["Image","Name","Company","Price per unit","Quantity","Total","Remove"];
 const CartTable=(props)=> {
+  const queryClient= useQueryClient();
+  const dispatch= useDispatch();
 
+
+  const {mutate:removeCartItemMutate,isError,error,isLoading}= useMutation({
+    mutationKey:["remove-item"],
+    mutationFn: async(productId)=>{
+      return await $axios.put(`/cart/remove-item/${productId}`);
+    },
+    onSuccess:(res)=>{
+      queryClient.invalidateQueries("cart-data");
+      dispatch(openSuccessSnackbar(res?.data?.message));
+    },
+    onError:(error)=>{
+      dispatch(openErrorSnackbar(error?.res?.data?.message));
+    }
+  })
 
  
 
 
   return (
     <TableContainer component={Paper}>
+      {isLoading && <LinearProgress color='secondary'/>}
       <Table sx={{ minWidth: 650}} aria-label="simple table" >
         <TableHead>
           <TableRow>
@@ -51,7 +72,7 @@ const CartTable=(props)=> {
                 <Typography variant='body1'>{item?.company}</Typography>
               </TableCell>
               <TableCell align="left">
-                <Typography variant='body1'>{item?.price}</Typography>
+                <Typography variant='body1'>{(item.price || 0).toFixed(2)}</Typography>
               </TableCell>
 
               <TableCell align="left">
@@ -63,15 +84,14 @@ const CartTable=(props)=> {
                     gap:"1rem"
                 }}
                 >
-                  <AiOutlineMinus color='green' size={15}/>
+                  <Button variant='contained'><AiOutlineMinus color='green' size={15}/></Button>
                     <Typography>{item?.orderQuantity}</Typography> 
-                  <AiOutlinePlus color='green' size={15}/>
-
+                  <Button variant='contained'><AiOutlinePlus color='green' size={15}/></Button>
                 </Stack>
               </TableCell>
 
               <TableCell align="left">
-                <Typography variant='body1'> {item?.total}</Typography>
+                <Typography variant='body1'> {(item.total || 0).toFixed(2)}</Typography>
               </TableCell>
 
               <TableCell align='center'>
@@ -79,6 +99,9 @@ const CartTable=(props)=> {
                   size={20} 
                   style={{color:"red"}}
                   cursor="pointer"
+                  onClick={()=>{
+                    removeCartItemMutate(item?.productId);
+                  }}
                 />
               </TableCell>
 

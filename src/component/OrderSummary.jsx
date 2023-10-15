@@ -1,7 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material'
 import React from 'react'
 
-const OrderSummary = () => {
+const OrderSummary = ({subTotal,grandTotal}) => {
   return (
     <Box sx={{
             padding:"2rem",
@@ -19,15 +19,15 @@ const OrderSummary = () => {
         <Typography variant='h5' mb="1rem">Order summary</Typography>
         <Stack direction="row" spacing={16} justifyContent="space-between">
             <Typography>Sub total</Typography>
-            <Typography>1500</Typography>
+            <Typography>{subTotal}</Typography>
         </Stack>
         <Stack direction="row" spacing={16} justifyContent="space-between">
             <Typography>Discount</Typography>
-            <Typography>1500</Typography>
+            <Typography>5%</Typography>
         </Stack>
         <Stack direction="row" spacing={16} justifyContent="space-between">
             <Typography>Grand total</Typography>
-            <Typography>150000</Typography>
+            <Typography>{grandTotal}</Typography>
         </Stack>
     </Box>
   )
