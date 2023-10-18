@@ -15,12 +15,14 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { Avatar, Badge, Stack } from '@mui/material';
 import { deepOrange } from '@mui/material/colors';
-import { Link, NavLink, Navigate, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import {BiLogOut} from "react-icons/bi";
 import LogoutDialog from './LogoutDialog';
 import { AiOutlineShoppingCart } from 'react-icons/ai';
 import { useQuery } from 'react-query';
 import {$axios} from "../lib/axios";
+import { getUserShortName } from '../utilis/userShortName';
+import { isSeller } from '../utilis/user.role';
 
 
 const drawerWidth = 240;
@@ -46,18 +48,25 @@ function Header(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
+  const {pathname}= useLocation();
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   };
 
   const navigate= useNavigate();
+
+
+
 //get cart count query
+const isUserSeller= isSeller();
 const {data,isError,error}=useQuery({
   queryKey:["cart-count"],
   queryFn:async()=>{
     return await $axios.get("/cart/count");
-  }
+  },
+  enabled:!isUserSeller,     //in network cart count isnot hit 
 })
+
 const cardItemCount= data?.data?.count;
 
   const drawer = (
@@ -116,7 +125,7 @@ const cardItemCount= data?.data?.count;
                     isActive ? "navlink-active" : "navlink-pending"
                   }
                 >
-                  <Typography sx={{color:"black",textDecoration:"none"}}>
+                  <Typography sx={{color:pathname===`${item.path}`?"green":"black",textDecoration:"none"}}>
                     {item.name}
                   </Typography> 
                 </NavLink>
@@ -132,16 +141,21 @@ const cardItemCount= data?.data?.count;
             spacing={2}
  
           >
+            {!isSeller() && ( 
             <Badge badgeContent={cardItemCount} color="primary">
 
-              <AiOutlineShoppingCart color='black' size={30} onClick={()=>navigate("/cart")}/>
+              <AiOutlineShoppingCart 
+                style={{cursor:"pointer",color:pathname==="/cart"?"green":"black"}} 
+                size={30} 
+                onClick={()=>navigate("/cart")}/>
             </Badge>
+            )}
+           
             <Avatar
               sx={{ bgcolor: deepOrange[400] }}
-              alt="Remy Sharp"
-              src="/broken-image.jpg"
             >
-              N
+              {getUserShortName()}
+              
             </Avatar>
           </Stack>
 

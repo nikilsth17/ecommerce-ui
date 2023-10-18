@@ -1,9 +1,18 @@
-import { Box, Stack, Typography } from '@mui/material'
+import { Box, Button, Stack, Typography } from '@mui/material'
 import React from 'react'
 
 const OrderSummary = ({subTotal,grandTotal}) => {
   return (
     <Box sx={{
+            display:"flex",
+            flexDirection:"column",
+            gap:"2rem",
+            justifyContent:"center",
+            alignItems:"center"
+        }}
+    >
+
+        <Box sx={{
             padding:"2rem",
             borderRadius:"10px",
 
@@ -30,6 +39,11 @@ const OrderSummary = ({subTotal,grandTotal}) => {
             <Typography>{grandTotal}</Typography>
         </Stack>
     </Box>
+    <Box>
+        <Button fullWidth variant="contained">Proceed to </Button>
+    </Box>
+    </Box>
+    
   )
 }
 

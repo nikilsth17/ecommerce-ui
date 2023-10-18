@@ -37,7 +37,8 @@ const Product = () => {
           userRole==="seller" &&   <Button variant='contained' 
           onClick={()=>naviagate("/product/add")} 
           sx={{
-            gap:"1rem"
+            gap:"1rem",
+            marginBottom:"2rem"
           }}
         ><HiOutlineViewGridAdd size={"1.5rem"}/> Product</Button>
         }

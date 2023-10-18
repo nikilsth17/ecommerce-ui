@@ -18,13 +18,14 @@ const LoginForm = () => {
       localStorage.setItem("accesstoken", res?.data?.token);
       localStorage.setItem("firstName", res?.data?.user?.firstName);
       localStorage.setItem("userRole", res?.data?.user?.role);
+      localStorage.setItem("lastName",res?.data?.user?.lastName);
       navigate("/product");
     },
     
   });
   return (
     <>
-      {isLoading && <Typography>Logging in...</Typography>}
+      {/* {isLoading && <Typography>Logging in...</Typography>} */}
       {isError && (
         <Typography sx={{ color: "red" }}>
           {error.response.data.message}
@@ -64,7 +65,7 @@ const LoginForm = () => {
             ) : null}
 
 
-        <Button type="submit" variant="contained" color="success">
+        <Button type="submit" variant="contained" color="success" disabled={isLoading}>
               Sign in
         </Button>
 

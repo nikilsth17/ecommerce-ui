@@ -22,8 +22,8 @@ const CartTable=(props)=> {
   const queryClient= useQueryClient();
   const dispatch= useDispatch();
 
-
-  const {mutate:removeCartItemMutate,isError,error,isLoading}= useMutation({
+//remove item from card mutation========================================
+  const {mutate:removeCartItemMutate,isError,error,isLoading:removeItemLoading}= useMutation({
     mutationKey:["remove-item"],
     mutationFn: async(productId)=>{
       return await $axios.put(`/cart/remove-item/${productId}`);
@@ -35,15 +35,34 @@ const CartTable=(props)=> {
     onError:(error)=>{
       dispatch(openErrorSnackbar(error?.res?.data?.message));
     }
-  })
+  });
+
+// update item quantity mutation============================================
+    const {mutate:updateQuantityMutate,isLoading:updateQuantityLoading}=useMutation({
+      mutationKey:["update-cart-item-quantity"],
+      mutationFn:async(data)=>{
+        return await $axios.put(`/cart/update/quantity/${data.productId}`,{
+          option:data.option,
+        });
+      },
+      onSuccess:(res)=>{
+        queryClient.invalidateQueries("cart-data");
+        dispatch(openSuccessSnackbar(res?.data?.message));
+      },
+      onError:(error)=>{
+        dispatch(openErrorSnackbar(error?.res?.data?.message));
+      }
+    })
+
+    
 
  
 
 
   return (
     <TableContainer component={Paper}>
-      {isLoading && <LinearProgress color='secondary'/>}
-      <Table sx={{ minWidth: 650}} aria-label="simple table" >
+      {(removeItemLoading ||updateQuantityLoading) && <LinearProgress color='secondary'/>}
+      <Table sx={{minWidth: 650}} aria-label="simple table" >
         <TableHead>
           <TableRow>
             {tableHeadData.map((item)=>{
@@ -84,9 +103,26 @@ const CartTable=(props)=> {
                     gap:"1rem"
                 }}
                 >
-                  <Button variant='contained'><AiOutlineMinus color='green' size={15}/></Button>
+                {item.orderQuantity>1 && (
+                  <AiOutlineMinus color='green' size={15} 
+                  onClick={()=>
+                    updateQuantityMutate({
+                      option:"decrease",
+                      productId:item?.productId
+                    })
+                  }/>
+                )  
+                  }
                     <Typography>{item?.orderQuantity}</Typography> 
-                  <Button variant='contained'><AiOutlinePlus color='green' size={15}/></Button>
+               {item.availableQuantity> item.orderQuantity && (  
+                    <AiOutlinePlus color='green' size={15}
+                    onClick={()=>updateQuantityMutate({
+                      option:"increase",
+                      productId:item?.productId
+                    })}
+                
+                    />
+               )}
                 </Stack>
               </TableCell>
 
