@@ -1,14 +1,31 @@
 import React, { useState } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Button, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import { useMutation } from 'react-query';
 import { $axios } from '../lib/axios';
 import { useNavigate } from 'react-router-dom';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 
 const RegisterForm = () => {
+
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleClickShowConfirmPassword = () =>
+    setShowConfirmPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+  const handleConfirmPWMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
   const navigate= useNavigate();
   const {mutate,isLoading,isError,error} =useMutation({
     mutationKey:["register-user"],
@@ -116,20 +133,61 @@ const RegisterForm = () => {
               <div className="error-message">{formik.errors.lastName}</div>
             ) : null}
 
-            <TextField label="Password" {...formik.getFieldProps("password")} />
-            {formik.touched.password && formik.errors.password ? (
-              <div className="error-message">{formik.errors.password}</div>
-            ) : null}
 
-            <TextField
-              label="Confirm password"
-              {...formik.getFieldProps("confirmPassword")}
-            />
-            {formik.touched.confirmPassword && formik.errors.confirmPassword ? (
-              <div className="error-message">
-                {formik.errors.confirmPassword}
-              </div>
-            ) : null}
+
+<FormControl variant="outlined" fullWidth>
+              <InputLabel>Password</InputLabel>
+              <OutlinedInput
+                autoComplete="true"
+                {...formik.getFieldProps("password")}
+                type={showPassword ? "text" : "password"}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="Password"
+              />
+              {formik.touched.password && formik.errors.password ? (
+                <div className="error-message">{formik.errors.password}</div>
+              ) : null}
+            </FormControl>
+
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel>Confirm Password</InputLabel>
+              <OutlinedInput
+                autoComplete="true"
+                {...formik.getFieldProps("confirmPassword")}
+                type={showConfirmPassword ? "text" : "password"}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowConfirmPassword}
+                      onMouseDown={handleConfirmPWMouseDownPassword}
+                      edge="end"
+                    >
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="Confirm password"
+              />
+
+              {formik.touched.confirmPassword &&
+              formik.errors.confirmPassword ? (
+                <div className="error-message">
+                  {formik.errors.confirmPassword}
+                </div>
+              ) : null}
+            </FormControl>
 
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Gender</InputLabel>

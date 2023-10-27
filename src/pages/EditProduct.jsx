@@ -1,28 +1,27 @@
 import { Box, Button, Checkbox, FilledInput, FormControl, InputAdornment, InputLabel, MenuItem, Select, TextField, TextareaAutosize, Typography } from '@mui/material';
 import { Formik } from 'formik';
-import React from 'react'
+import React, { useState } from 'react'
 import * as Yup from 'yup'
 import { $axios } from '../lib/axios';
 import { useMutation, useQuery } from 'react-query';
 import Progress from '../component/Progress';
 import { useNavigate, useParams } from 'react-router-dom';
+import { placeHolderImage } from '../constraints/fallBackImage';
+import { useDispatch } from 'react-redux';
+import { openErrorSnackbar } from '../store/slice/snackbarSlice';
+import axios from 'axios';
+import { productCategories } from '../constraints/general.constant';
 
 const EditProduct = () => {
-    const productCategories = [
-        "grocery",
-        "kitchen",
-        "clothing",
-        "electronics",
-        "furniture",
-        "bakery",
-        "liquor",
-        "sports",
-      ];
-
     const params = useParams();
     const productId = params.id;
 
     const navigate = useNavigate();
+    const [localUrl,setLocalUrl]= useState(null);
+    const [productImage,setProductImage]= useState(null);
+    const [imageLoading,setImageLoading]=useState(false);
+
+    const dispatch= useDispatch();
 
   //   get product details query to prefill form
     const { data, isLoading, isError, error } = useQuery({
@@ -48,7 +47,7 @@ const EditProduct = () => {
         },
     });
 
-    if (isLoading || editProductLoading) {
+    if (isLoading || editProductLoading || imageLoading) {
         return <Progress />;
     }
 
@@ -99,7 +98,33 @@ const EditProduct = () => {
         .required("Quantity is required.")
         .integer("Quantity must be an integer."),
         })}
-        onSubmit={(values) => {
+
+
+
+        onSubmit={async(values) => {
+          let imageUrl=""
+          if (productImage){
+            const cloudName="dwdsb90uh";
+            // create from data object 
+            const data= new FormData();
+            data.append("file",productImage);
+            data.append("upload_preset","ecommerce");
+            data.append("cloud_name",cloudName);
+            
+            //hit cloudinary api
+            try {
+              setImageLoading(true);
+              const res=await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,data);
+              imageUrl=res?.data?.secure_url;
+              setImageLoading(false);
+            } catch (error) {
+              dispatch(openErrorSnackbar(error?.res?.data?.message));
+              setImageLoading(false);
+            } 
+          }
+          if (imageUrl){
+            values.image=imageUrl;
+          }
             mutate(values);
         }}
   >
@@ -131,6 +156,17 @@ const EditProduct = () => {
                 padding: "1rem",
               }}
         >
+          <Typography variant='h6' sx={{color:"black"}}>Edit product</Typography>
+         
+       <img src={localUrl || productDetails?.image || placeHolderImage} 
+            style={{width:"100%",height:"auto",objectFit:"cover"}}/>
+       <input 
+              type="file"
+              onChange={(event)=>{
+                const productPhoto= event.target.files[0];
+                setProductImage(productPhoto);
+                setLocalUrl(URL.createObjectURL(productPhoto));
+              }}/>
        
        <FormControl fullWidth>
            <TextField

@@ -148,7 +148,7 @@ const cardItemCount= data?.data?.count;
                 style={{cursor:"pointer",color:pathname==="/cart"?"green":"black"}} 
                 size={30} 
                 onClick={()=>navigate("/cart")}/>
-            </Badge>
+            </Badge>  
             )}
            
             <Avatar

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { Box } from '@mui/system';
@@ -6,10 +6,19 @@ import { Button, Checkbox, FilledInput, FormControl, InputAdornment, InputLabel,
 import { useMutation } from 'react-query';
 import { $axios } from '../lib/axios';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { openErrorSnackbar } from '../store/slice/snackbarSlice';
+import axios from 'axios';
+import Progress from '../component/Progress';
+import { productCategories } from '../constraints/general.constant';
 
 const AddProduct = () => {
-  const navigate = useNavigate();
 
+  const [productImage,setProductImage]=useState(null);
+  const [localUrl,setLocalUrl]= useState(null);
+  const [imageLoading,setImageLoading]=useState(false);
+  const navigate = useNavigate();
+  const dispatch= useDispatch();
   const {mutate,isLoading,isError,error}= useMutation({
     mutationKey:["add-product"],
     mutationFn:async(values)=>{
@@ -18,17 +27,15 @@ const AddProduct = () => {
     onSuccess: (res) => {
       navigate("/product");
     },
+    onError:(error)=>{
+      dispatch(openErrorSnackbar(error?.res?.data?.message));
+    }
   });
-    const productCategories = [
-        "grocery",
-        "kitchen",
-        "clothing",
-        "electronics",
-        "furniture",
-        "bakery",
-        "liquor",
-        "sports",
-      ];
+    
+    
+      if (isLoading || imageLoading){
+        return <Progress/>
+      }
   return (
     <Box 
         sx={{
@@ -40,7 +47,7 @@ const AddProduct = () => {
                 // backgroundColor: "grey",
          
         }}>
-          <Formik
+    <Formik
       initialValues={{ 
         name: "",
         company: "",
@@ -78,9 +85,35 @@ const AddProduct = () => {
             .required("Quantity is required.")
             .integer("Quantity must be an integer."),
       })}
-      onSubmit={(values) => {
+      onSubmit={async(values) => {
         values.category=values.category.toLowerCase();
-        values.price=Number(values.price);
+        // values.price=Number(values.price);
+
+        let imageUrl=""
+        if (productImage){
+          const cloudName="dwdsb90uh";
+          // create from data object 
+          const data= new FormData();
+          data.append("file",productImage);
+          data.append("upload_preset","ecommerce");
+          data.append("cloud_name",cloudName);
+          
+          //hit cloudinary api
+          try {
+            setImageLoading(true);
+            const res=await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,data);
+            imageUrl=res?.data?.secure_url;
+            setImageLoading(false);
+          } catch (error) {
+            dispatch(openErrorSnackbar(error?.res?.data?.message));
+            setImageLoading(false);
+          } 
+        }
+        if (imageUrl){
+          values.image=imageUrl;
+        }
+
+        
         mutate(values);
       }}   
     >
@@ -105,6 +138,19 @@ const AddProduct = () => {
               Add Product
             </Typography>
 
+{/*============================= image part================================== */}
+            {
+              productImage && <img src={localUrl} style={{width:"100%", height:300}}/>
+            }
+            <input 
+              type="file"
+              onChange={(event)=>{
+                const productPhoto= event.target.files[0];
+                setProductImage(productPhoto);
+                setLocalUrl(URL.createObjectURL(productPhoto));
+              }}/>
+
+{/* =================================================================================== */}
             <FormControl fullWidth>
               <TextField
                 variant="filled"

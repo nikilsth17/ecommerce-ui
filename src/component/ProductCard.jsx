@@ -5,6 +5,10 @@ import ProductDetail from '../pages/ProductDetail';
 import { useNavigate } from 'react-router-dom';
 import { $axios } from '../lib/axios';
 import { QueryClient, useMutation, useQueryClient } from 'react-query';
+import { placeHolderImage } from '../constraints/fallBackImage';
+
+
+
 
 const ProductCard = (props) => {
 
@@ -98,8 +102,8 @@ const ProductCard = (props) => {
           }}
           component="img"
           alt={product?.name}
-          image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_IkKlZwT8j_xFieeC3J1C964Q4ui0HvIOwQ&usqp=CAU"
-        />
+          image={product?.image || placeHolderImage}
+          />
         <CardContent>
           <Stack direction="row" gap="1rem">
             <Typography gutterBottom variant="h5" component="div">

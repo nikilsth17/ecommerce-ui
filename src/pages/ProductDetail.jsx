@@ -70,7 +70,7 @@ const ProductDetail = () => {
         }}>
             <Grid item>
                 <img style={{height:"300px"}}
-                src='https://res.cloudinary.com/sharp-consumer-eu/image/fetch/w_3000,f_auto/https://s3.infra.brandquad.io/accounts-media/SHRP/DAM/origin/09d622da-69eb-11ea-9820-eae0da768f80.jpg'/>
+                src={productDetail?.image}/>
             </Grid>
         </Grid>
 

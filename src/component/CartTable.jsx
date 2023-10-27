@@ -13,6 +13,7 @@ import { QueriesObserver, QueryClient, useMutation, useQueryClient } from 'react
 import { $axios } from '../lib/axios';
 import { useDispatch } from 'react-redux';
 import { openErrorSnackbar, openSuccessSnackbar } from '../store/slice/snackbarSlice';
+import { placeHolderImage } from '../constraints/fallBackImage';
 
 
 
@@ -30,6 +31,7 @@ const CartTable=(props)=> {
     },
     onSuccess:(res)=>{
       queryClient.invalidateQueries("cart-data");
+      queryClient.invalidateQueries("cart-count");
       dispatch(openSuccessSnackbar(res?.data?.message));
     },
     onError:(error)=>{
@@ -47,6 +49,7 @@ const CartTable=(props)=> {
       },
       onSuccess:(res)=>{
         queryClient.invalidateQueries("cart-data");
+        queryClient.invalidateQueries("cart-count");
         dispatch(openSuccessSnackbar(res?.data?.message));
       },
       onError:(error)=>{
@@ -82,7 +85,7 @@ const CartTable=(props)=> {
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqMy0HzEdFihrjVAgV9Y4pRvcDyn6QvPdmRA&usqp=CAU" height={100}/>
+                <img src={item.image || placeHolderImage} height={100}/>
               </TableCell>
               <TableCell align="left">
                 <Typography variant='body1'> {item?.name}</Typography>

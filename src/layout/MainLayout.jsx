@@ -4,6 +4,7 @@ import Footer from '../component/Footer'
 import Header from '../component/Header'
 import { Box } from '@mui/system'
 import CustomSnackbar from '../component/CustomSnackbar'
+import FilterProduct from '../component/FilterProduct'
 
 
 //children routes
@@ -12,6 +13,7 @@ const MainLayout = () => {
     <>
     <CustomSnackbar/>
      <Header/>
+     <FilterProduct/>
      <Box sx={{minHeight:"90vh"}}>        
       <Outlet/>
     </Box>
